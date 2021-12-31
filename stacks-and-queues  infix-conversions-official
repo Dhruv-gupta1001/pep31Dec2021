@@ -1,0 +1,74 @@
+import java.io.*;
+import java.util.*;
+
+public class Main{
+  
+
+public static void main(String[] args) throws Exception {
+    BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+    String exp = br.readLine();
+    // code
+    Stack<Character> operator =new Stack<>();
+    Stack<String> pre =new Stack<>();
+    Stack<String> post=new Stack<>();
+    for(int i=0;i<exp.length();i++){
+        char ch= exp.charAt(i);
+        if(ch=='('){
+            operator.push(ch);
+        }else if(ch=='+'||ch=='*'||ch=='/'||ch=='-'){
+            while(operator.size()>0 && precedence(ch)<=precedence(operator.peek()) && operator.peek()!='('){
+                char op=operator.pop();
+                String posts2=post.pop();//postfix string 2
+                String posts1=post.pop();
+                String pres2 =pre.pop();
+                String pres1 =pre.pop();
+                
+                pre.push(op+pres1+pres2);
+                post.push(posts1+posts2+op);
+            }
+            operator.push(ch);
+        }else if(ch==')'){
+            while(operator.peek()!='('){
+                char op=operator.pop();
+                String posts2=post.pop();//postfix string 2
+                String posts1=post.pop();
+                String pres2 =pre.pop();
+                String pres1 =pre.pop();
+                
+                pre.push(op+pres1+pres2);
+                post.push(posts1+posts2+op);
+            }
+            operator.pop();  //remove (
+        }else{
+            pre.push(Character.toString(ch));
+            post.push(Character.toString(ch));
+        }
+        
+    }
+    
+     // 1 * ya / bache honge and bohot sare + - bache honge         
+    while(operator.size()>0){
+        char op=operator.pop();
+            String posts2=post.pop();//postfix string 2
+            String posts1=post.pop();
+            String pres2 =pre.pop();
+            String pres1 =pre.pop();
+            
+            pre.push(op+pres1+pres2);
+            post.push(posts1+posts2+op);
+    }
+    System.out.println(post.peek());
+    System.out.println(pre.peek());
+ }
+ 
+ public static int precedence(char op){
+     int res=0;
+     if(op=='+' || op=='-'){
+         res=1;
+     }else if(op=='/' || op=='*'){
+         res=2;
+     }
+     return res;
+ }
+ 
+}
